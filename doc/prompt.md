@@ -193,3 +193,40 @@ Create a highly professional **README.md** file for the Velocity project. The do
     * Add a specific section pointing to **REPORT.md**.
     * Description: "For a deep dive into the architectural decisions, atomicity proofs, and sharding logic, please refer to the [Technical Report](REPORT.md)."
 ```
+
+
+---
+
+- Optiional
+
+**Objective:** Create a comprehensive `DESIGN_GUIDE.md` file that acts as a deep-dive educational guide for the Velocity project. The goal is to move beyond "implementation" and achieve "mastery" of the underlying concepts, code structure, and design decisions.
+
+**Role:** Act as a Principal Software Engineer mentoring a Junior Engineer. Your explanation should be clear, insightful, and focus on the "Why" and "How" rather than just the "What."
+
+**Structure of `DESIGN_GUIDE.md`:**
+
+1.  **The "Big Picture" Mental Model**
+    * Explain the concept of **Distributed Rate Limiting** using a real-world analogy (e.g., a subway turnstile or a club bouncer).
+    * Explain **Token Bucket Algorithm** visually. Why did we choose this over "Leaky Bucket" or "Fixed Window"?
+    * Explain **Atomic Operations** in a distributed system. Why is `x = x + 1` dangerous without locking?
+
+2.  **Code Anatomy & Deep Dive**
+    * **Redis Lua Script:** Break down the Lua script in `main.go` line-by-line. Explain *exactly* why we need Lua here. What is the specific race condition it prevents? (Show a "Before/After" scenario).
+    * **Go Channels & Goroutines:** In `rate_limiter_test.go`, explain how `sync.WaitGroup` and goroutines work together. How does Go handle concurrency differently from other languages (like Python or Java) in this context?
+    * **Middleware Pattern:** Explain how the `RateLimitMiddleware` wraps the HTTP handler. How does the control flow move?
+
+3.  **Architectural Decisions**
+    * **Sharding Logic:** Explain the math behind `hash(userID) % N`. Why is "Consistent Hashing" (or this simple modulo approach) critical for scaling? What happens if we just used a random Redis instance?
+    * **Dependency Injection:** Explain why we pass the `RedisShardManager` into the `RateLimiter` struct instead of creating it inside. How does this help with testing?
+
+4.  **"What If?" Scenarios**
+    * What if Redis crashes? (Explain Fail-Open vs. Fail-Closed).
+    * What if we have 1 million users? Where is the bottleneck?
+    * What if we wanted to change the rate limit per user tier (Premium vs. Free)? How would the code change?
+
+5.  **Key Takeaways for Interviews**
+    * Summarize 3-5 "Killer Points" from this project that I should mention in a system design interview to look like a senior engineer.
+
+**Tone:** Educational, encouraging, and highly technical but accessible. Use code snippets to illustrate points.
+
+---
